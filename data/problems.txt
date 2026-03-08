@@ -1,0 +1,159 @@
+# 1. the ingested urls are nearly 5000 
+but the discovered urls are nearly 29894
+
+it is a glitch we have to check it once ..
+
+we have to make a new folder .. 
+
+for time to time recrawling , reingestion to the vector db because the data / links / all other things are keep updating on thew website but we don't have to touch the single line of code previously posted on github .. 
+
+we have to check they are properly ingested or not because it is a necessary things ..
+
+we have to store all contents in webpage with metadata + pdf,excel and any other type of data in vectordb in the form of chunks but we have to keep on updating the db using crawling because website is keeps on updating . we have to  check missing urls who are not ingested based on discovered urls.. 
+
+we have also check that pipeline works properly withought touching the existing pipeline .. because it is working specifically on a specific task .. so , we don't have to make mixed/ crossover in that.
+
+1. we have to make 2 pipelines
+
+1 .for checking discovered urls existing who are ingested properly or not by checking discovered_urls.json , ingest_urls.json,ingested_urls.json..
+
+second pipeline :
+if new links or content found on website just append urls in discovered_urls.json ..
+then ingest it using ingest_urls and ingested_urls.json
+
+we have to make diffrent folders for both processes
+diffrent python files for each process.
+
+current folder
+
+Folder PATH listing for volume New Volume
+Volume serial number is A840-97BF
+E:.
+|   .env
+|   .gitignore
+|   aids4.txt
+|   BATCH_PROCESSING_FIX.md
+|   CACHE_REDIRECTION_FIX.md
+|   CODE_CHANGES_DETAILED.md
+|   config.py
+|   COPY_PASTE_CLEANUP_COMMANDS.md
+|   C_DRIVE_CLEANUP_PLAN.md
+|   diagnose_faiss.py
+|   DIAGNOSIS_AND_SOLUTION_COMPLETE.md
+|   DISK_CRISIS_SOLUTION.md
+|   EXECUTION_GUIDE.md
+|   FAISS_STATUS_REPORT.py
+|   folder_structure.txt
+|   IMPLEMENTATION_COMPLETE.md
+|   inspect_faiss.py
+|   ISSUE_FOUND_AND_FIXED.md
+|   main_initial_crawl.py
+|   manual_ingest.py
+|   MULTIMODAL_RAG_STATUS.md
+|   pipeline_run.log
+|   proof_output.txt
+|   proof_test.py
+|   QUICK_START.md
+|   README.md
+|   requirements.txt
+|   STEP3_UPGRADE_SUMMARY.md
+|   test_improved_rag.py
+|   test_multimodal.py
+|   test_rag_improvement.py
+|   test_rag_pipeline.py
+|   test_rag_proof.py
+|   test_rag_simple.py
+|   test_simple_proof.py
+|   validate_system.py
+|   
++---.vscode
+|       settings.json
+|       
++---chatbot
+|   |   rag_engine.py
+|   |   streamlit_app.py
+|   |   
+|   \---__pycache__
+|           rag_engine.cpython-313.pyc
+|           __init__.py
+|           
++---crawler
+|   |   bfs_crawler.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           bfs_crawler.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---data
+|   |   discovered_urls.json
+|   |   ingested_urls.json
+|   |   ingest_urls.json
+|   |   pipeline_progress.json
+|   |   problems.txt
+|   |   test_media_registry.json
+|   |   url_registry.json
+|   |   __init__.py
+|   |   
+|   \---faiss_index
+|           index.faiss
+|           index.pkl
+|           
++---detector
+|   |   change_detector.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           change_detector.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---ingestion
+|   |   ingest_pipeline.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           ingest_pipeline.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---loaders
+|   |   loader_routers.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           loader_routers.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---scripts
+|       check_env.py
+|       generate_ingest_list.py
+|       
++---vectordb
+|   |   faiss_stores.py
+|   |   image_embeddings.py
+|   |   vectordb_manager.py
+|   |   __init__.py
+|   |   
+|   +---chroma_db
+|   |       chroma.sqlite3
+|   |       
+|   \---__pycache__
+|           faiss_stores.cpython-313.pyc
+|           image_embeddings.cpython-313.pyc
+|           vectordb_manager.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
+\---__pycache__
+        config.cpython-313.pyc
+        main_initial_crawl.cpython-313.pyc
+        
+so make  a github copilot prompt to execute it prperly withought removing existing good working code.
+
+
+
+o/p:
+
+logic :
+
+missing = discovered - ingested
+pending = ingest_urls - ingested
+extra = ingested - discovered

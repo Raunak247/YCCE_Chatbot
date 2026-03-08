@@ -59,15 +59,24 @@ class VectorDBManager:
     # LOAD DB
     # --------------------------------------------------
     def _load_db(self):
-        if os.path.exists(self.persist_directory):
-            self.db = FAISS.load_local(
-                self.persist_directory,
-                self.embeddings,
-                allow_dangerous_deserialization=True
-            )
-            print("[OK] FAISS loaded")
+        # Check if FAISS index files actually exist
+        index_faiss_path = os.path.join(self.persist_directory, "index.faiss")
+        index_pkl_path = os.path.join(self.persist_directory, "index.pkl")
+        
+        if os.path.exists(index_faiss_path) and os.path.exists(index_pkl_path):
+            try:
+                self.db = FAISS.load_local(
+                    self.persist_directory,
+                    self.embeddings,
+                    allow_dangerous_deserialization=True
+                )
+                print("[OK] FAISS loaded")
+            except Exception as e:
+                print(f"[WARN] Failed to load FAISS: {e} - will create new")
+                self.db = None
         else:
             print("[WARN] No FAISS index found - will create new")
+            self.db = None
 
     # --------------------------------------------------
     # ⭐⭐⭐ THIS WAS MISSING ⭐⭐⭐

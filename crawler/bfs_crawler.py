@@ -25,7 +25,7 @@ def detect_type(url):
 
 
 def bfs_crawl(start_url=BASE_URL):
-    print("🕷️ BFS crawling started...")
+    print("[CRAWL] BFS crawling started...")
 
     visited = set()
     def normalize_url(u):
@@ -83,5 +83,5 @@ def bfs_crawl(start_url=BASE_URL):
     with open(DISCOVERED_URLS, "w") as f:
         json.dump(results, f, indent=2)
 
-    print("✅ BFS crawling completed")
+    print("[OK] BFS crawling completed")
     return results

@@ -172,6 +172,103 @@ python main_initial_crawl.py
 
 ---
 
+## 🔗 URL Governor Pipelines (Post-Ingestion)
+
+After `main_initial_crawl.py` completes, the system has ingested ~5,000 URLs discovered but left ~24,894 URLs not ingested. Use URL Governor to complete the ingestion.
+
+### Pipeline 1: Backfill Missing URLs (24,894)
+
+**Purpose:** Ingest all discovered URLs that were never ingested
+
+```bash
+python pipelines/url_governor/missing_url_ingestion/run_missing_ingestion.py
+```
+
+**What it does:**
+1. Loads discovered_urls.json (~29,894 URLs)
+2. Loads ingested_urls.json (~5,000 URLs)  
+3. Computes missing = discovered - ingested (24,894 URLs)
+4. Ingests missing URLs in batches of 500
+5. Updates ingested_urls.json
+6. **Duration: ~25-30 minutes**
+
+**Monitor Progress:**
+```bash
+# Watch logs in real-time
+Get-Content pipelines/url_governor/missing_url_ingestion/logs/*.log -Wait
+
+# Or check coverage
+python -c "import json; d=len(json.load(open('data/discovered_urls.json'))); i=len(json.load(open('data/ingested_urls.json'))); print(f'Coverage: {i/d*100:.1f}%')"
+```
+
+**Result:**
+```
+BEFORE: discovered=29,894, ingested=5,000, coverage=16.7%
+AFTER:  discovered=29,894, ingested=29,894, coverage=100% ✅
+```
+
+---
+
+### Pipeline 2: Schedule Continuous Incremental Updates
+
+**Purpose:** Continuously crawl for new URLs and ingest them
+
+**Manual Run:**
+```bash
+python pipelines/url_governor/incremental_recrawl_ingestion/run_incremental_ingestion.py
+```
+
+**Scheduled Runs (every 6 hours):**
+
+**Windows Task Scheduler:**
+```powershell
+# Create script C:\Scripts\incremental_pipeline.bat
+@echo off
+cd E:\YCCE_RAG
+conda activate base
+python pipelines/url_governor/incremental_recrawl_ingestion/run_incremental_ingestion.py >> logs/incremental_scheduled.log 2>&1
+
+# Then create Task Scheduler task to run every 6 hours
+```
+
+**Linux/Mac Cron:**
+```bash
+# Add to crontab -e
+0 */6 * * * cd /path/to/YCCE_RAG && python pipelines/url_governor/incremental_recrawl_ingestion/run_incremental_ingestion.py >> logs/incremental_cron.log 2>&1
+```
+
+**What it does:**
+1. Runs crawler
+2. Finds new URLs (delta from discovered)
+3. Appends to discovered_urls.json
+4. Ingests new URLs in batches of 500
+5. Updates ingested_urls.json
+6. **Duration: ~7-15 minutes per run**
+
+**Monitor Progress:**
+```bash
+# Check recent logs
+Get-Content pipelines/url_governor/incremental_recrawl_ingestion/logs/*.log | Select-Object -Last 20
+
+# Check saturation (% of crawled URLs already discovered)
+# Higher % = crawler nearing completion
+```
+
+---
+
+### Complete URL Governor Documentation
+
+See **[url_governor.md](url_governor.md)** (70+ KB) for:
+- Complete architecture & execution guide
+- Safety & constraints
+- Example workflows
+- Troubleshooting
+- Scheduling setup
+
+See **[pipelines/url_governor/README.md](pipelines/url_governor/README.md)** for quick reference.
+
+---
+
 ## 🐛 Troubleshooting
 
 ### Issue: "FAISS index not found"

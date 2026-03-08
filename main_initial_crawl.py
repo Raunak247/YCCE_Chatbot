@@ -28,6 +28,9 @@ os.environ['TORCH_HOME'] = r'E:\.cache\torch'
 # CRITICAL: Redirect Transformers to E drive
 os.environ['TRANSFORMERS_CACHE'] = r'E:\.cache\transformers'
 
+# CRITICAL: Disable transformers dynamic import structure building (fixes Windows import hang)
+os.environ['TRANSFORMERS_OFFLINE'] = '1'
+
 # CRITICAL: Redirect other ML caches to E drive
 os.environ['KERAS_HOME'] = r'E:\.cache\keras'
 os.environ['MPLCONFIGDIR'] = r'E:\.cache\matplotlib'
@@ -43,7 +46,7 @@ os.makedirs(r'E:\.cache\keras', exist_ok=True)
 os.makedirs(r'E:\.cache\matplotlib', exist_ok=True)
 os.makedirs(r'E:\.cache\nltk_data', exist_ok=True)
 
-print('[STARTUP] ✅ All system paths redirected to E drive - C drive protected!')
+print('[STARTUP] [OK] All system paths redirected to E drive - C drive protected!')
 
 # Fix Windows console encoding
 if sys.platform == "win32":
